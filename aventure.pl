@@ -184,7 +184,7 @@ mode_emploi :-
         write('Entrez les commandes avec la syntaxe Prolog standard.'), nl,
         write('Les commandes disponibles sont :'), nl,
         write('demarrer.          -- pour commencer une partie.'), nl,
-        write('n. s. e. o. h. b.  -- pour aller dans une direction.'), nl,
+        write('n. s. e. o. u. b.  -- pour aller dans une direction.'), nl,
         write('ramasser(Objet).   -- pour ramasser un objet.'), nl,
         write('deposer(Objet).    -- pour laisser tomber un objet.'), nl,
         write('regarder.          -- pour regarder de nouveau autour de vous.'), nl,
