@@ -88,19 +88,19 @@ ramasser(_) :-
 % Inventaire
 
 inventaire :-
-        possede(X),
-        write('Inventaire:'),
+        possede(_),
+        write('Inventaire: '),
         nl,
         lister_inventaire.
 
-inventory:-
-  write('Vous ne possédez rien'),nl.
+inventaire:-
+        write('Vous ne possédez rien'),nl.
 
 lister_inventaire:-
-  possede(X),
-  tab(2),write(X),nl,
-  fail.
-lister_inventaire.
+        possede(X),
+        tab(2),write(X),nl,
+        fail.
+        lister_inventaire.
 
 % Règles pour laisser tomber un objet
 
@@ -155,6 +155,12 @@ regarder :-
 
 /* Ces règles définissent une boucle pour indiquer tous les objets
     qui se trouvent autour de vous */
+lister_objets_main() :-
+            il_y_a(X, en_main),
+            write('Il y a un(e) '), write(X), write(' dans vos mains.'), nl,
+            fail.
+
+lister_objets_main().
 
 lister_objets(Endroit) :-
         il_y_a(X, Endroit),
