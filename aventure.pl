@@ -1,7 +1,9 @@
 % Adapté de http://www.cis.upenn.edu/~mil_y_auszek/cis554-2011/Assignments/prolog-02-text-adventure.html by David Mil_y_auszek
 
 % Prédicats dynamiques
+/* Inventory */
 
+:- dynamic possede/1.
 :- dynamic je_suis_a/1, il_y_a/2, vivant/1.
 :- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(vivant(_)).
 
@@ -72,6 +74,13 @@ ramasser(_) :-
         write('Je ne vois rien ici.'),
         nl.
 
+% Inventaire
+inventaire :-
+        possede(X),
+        write('Inventaire:'),
+        nl,
+        write(X),
+        fail.
 
 % Règles pour laisser tomber un objet
 
