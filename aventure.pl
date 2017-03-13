@@ -10,7 +10,6 @@
 
 je_suis_a(prairie).
 
-
 /* Définition de l'environnement */
 
 chemin(araignee, b, caverne).
