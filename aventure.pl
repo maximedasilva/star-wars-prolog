@@ -7,12 +7,10 @@
 % Point de départ du joueur
 %Infos sur le joueur
 
-
-
-
 vie(5).
 argent(3000).
 je_suis_a(alderaan).
+
 /* Définition de l'environnement */
 chemin(chasseur_Tie, b, corellia).
 
@@ -39,24 +37,25 @@ chemin(kamino, e, mustafar) :- il_y_a(autorisation_de_lEmpire, possede).
 chemin(kamino, e, mustafar) :-
         write('Impossible de pénétrer sur ce secteur sans autorisations, refusé'), nl,
         fail.
-/* Définition de la boutique
 
-*/
-boutique(station).
+/* Définition de la boutique */
 
+boutique1(hoth).
+boutique2(tatooine).
 
 /* Objets disponibles dans la boutique */
 
-a_vendre(canon_laser, 1000).
-a_vendre(bouclier, 3000).
-a_vendre(boost, 2000).
-a_vendre(munition,100).
+a_vendre2(canon_laser, 1000).
+a_vendre2(bouclier, 3000).
+a_vendre1(boost, 2000).
+a_vendre1(munition,100).
 
 /* Définition des équipements disponiblespour le vaisseau */
 equipement(canon_laser).
 equipement(bouclier).
 equipement(boost).
 equipement(munition).
+equipement(invisibilite).
 
 /* Définition des objets du jeu */
 il_y_a(rubis, chasseur_Tie).
@@ -70,7 +69,6 @@ il_y_a(potion, kamino).
 /* Définition des NPC vivants */
 
 vivant(chasseur_Tie).
-
 
 % Règles pour ramasser un objet
 
@@ -101,58 +99,157 @@ ramasser(_) :-
         nl.
 
 % Inventaire
-
 inventaire :-
-        possede(_),
-        write('Inventaire: '),
-        nl,
-        lister_inventaire.
+    write('Argent:'), nl,
+    argent(C),
+    write(C), nl, nl,
+    write('Items in Cargo Hold:'), nl,
+    possede(X),
+    name(X), write(' <'), write(X), write('> '), nl,
+    est_installe(X), write('(installe)'),nl,
+    fail,!.
 
-inventaire:-
-        write('Vous ne possédez rien'),nl.
+inventaire.
 
-lister_inventaire:-
+/* Règles qui définissent comment installer un objet */
+
+installer(X) :-
         possede(X),
-        tab(2),write(X),nl,
-        fail.
-        lister_inventaire.
+        equipement(X),
+        est_installe(X),
+        name(X), write(' is already est_installe.'), nl,!.
+
+installer(X) :-
+        possede(X),
+        equipement(X),
+        X == munition,
+        write('Vous ne pouvez pas installer de munitions'),nl,!.
+
+installer(X) :-
+        possede(X),
+        equipement(X),
+        assert(est_installe(X)),
+        name(X), write(' has been est_installe successfully.'), nl,!.
+
+installer(X) :-
+        possede(X),
+        name(X), write(' cannot be est_installe on your ship.'), nl,!.
+
+installer(X) :-
+        write('You don''t have '), name(X), nl,!.
+
+installer(_) :- 
+        write('You don''t have that object'), nl,!.
 
 /* Règles pour acheter un objet dans la boutique*/
 acheter(X) :-
         je_suis_a(Endroit),
-        boutique(Endroit),
-        at(X, Endroit),
-        a_vendre(X, Prix),
-        credits(C),
+        boutique1(Endroit),
+        il_y_a(X, Endroit),
+        a_vendre1(X, Prix),
+        argent(C),
         C >= Prix,
-        retract(credits(C)),
+        retract(argent(C)),
         NewC is C-Prix,
-        assert(credits(NewC)),
+        assert(argent(NewC)),
         retract(a_vendre(X, Prix)),
-        retract(at(X, Endroit)),
+        retract(il_y_a(X, Endroit)),
         assert(possede(X)),
         write('Vous avez acheté '), X, nl,
         browse,!.
 
 acheter(X) :-
         je_suis_a(Endroit),
-        boutique(Endroit),
-        at(X, Endroit),
-        a_vendre(X, Prix),
-        credits(C),
+        boutique1(Endroit),
+        il_y_a(X, Endroit),
+        a_vendre1(X, Prix),
+        argent(C),
         C < Prix,
         write('Cet équipement est trop cher !'), nl,
+        browse,!.
+acheter(X) :-
+        je_suis_a(Endroit),
+        boutique2(Endroit),
+        il_y_a(X, Endroit),
+        a_vendre2(X, Prix),
+        argent(C),
+        C >= Prix,
+        retract(argent(C)),
+        NewC is C-Prix,
+        assert(argent(NewC)),
+        retract(a_vendre(X, Prix)),
+        retract(il_y_a(X, Endroit)),
+        assert(possede(X)),
+        write('Vous avez acheté '), X, nl,
         browse,!.
 
 acheter(X) :-
         je_suis_a(Endroit),
-        boutique(Endroit),
+        boutique2(Endroit),
+        il_y_a(X, Endroit),
+        a_vendre2(X, Prix),
+        argent(C),
+        C < Prix,
+        write('Cet équipement est trop cher !'), nl,
+        browse,!.
+acheter(X) :-
+        je_suis_a(Endroit),
+        boutique1(Endroit),
+        boutique2(Endroit),
         X,
         write('Cet objet n''est pas à vendre'), nl,
         browse,!.
 
 acheter(_) :-
         write('Il n''y a pas de boutique ici'), nl.
+
+/* Règles pour regarder les objets de la boutique sans en acheter */
+browse :-
+    je_suis_a(Endroit),
+    boutique1(Endroit),
+    argent(C),
+    write('Available argent: '), write(C), nl, nl,
+    write('The following items are available for purchase:'), nl, nl,
+    il_y_a(X, Endroit),
+    a_vendre1(X, Prix),
+    name(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
+    fail, !.
+
+browse :-
+    je_suis_a(Endroit),
+    boutique1(Endroit),
+    il_y_a(X, Endroit),
+    a_vendre1(X, Prix),
+    Prix > 0,
+    !.
+
+browse :-
+    je_suis_a(Endroit),
+    boutique2(Endroit),
+    argent(C),
+    write('Available argent: '), write(C), nl, nl,
+    write('The following items are available for purchase:'), nl, nl,
+    il_y_a(X, Endroit),
+    a_vendre2(X, Prix),
+    name(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
+    fail, !.
+
+browse :-
+    je_suis_a(Endroit),
+    boutique2(Endroit),
+    il_y_a(X, Endroit),
+    a_vendre2(X, Prix),
+    Prix > 0,
+    !.
+
+browse :-
+    je_suis_a(Endroit),
+    boutique1(Endroit);
+    boutique2(Endroit),
+    write('There is nothing for a_vendre1.'), nl.
+
+browse :-
+    write('There isn''t a boutique here'), nl.
 
 % Règles pour laisser tomber un objet
 
@@ -203,8 +300,6 @@ regarder :-
         nl,
         lister_objets(Endroit),
         nl.
-
-
 
 
 /* Ces règles définissent une boucle pour indiquer tous les objets
