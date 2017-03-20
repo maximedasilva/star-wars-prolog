@@ -1,26 +1,12 @@
-% Adapté de http://www.cis.upenn.edu/~mil_y_auszek/cis554-2011/Assignments/prolog-02-text-adventure.html by David Mil_y_auszek
-
-% Prédicats dynamiques
-
-:- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, boire/1, argent/1, a_vendre/1, est_installe/1.
-:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(vivant(_)).
+:- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, boire/1, argent/1, a_vendre/1.
+:- retractall(il_y_a(_,_)), retractall(je_suis_a(_)), retractall(vivant(_)).
 
 
-% Point de départ du joueur
-%Infos sur le joueur
-
-
-je_suis_a(alderran).
-
-vie(5).
-argent(3000).
-
-
-/* Définition de l'environnement */
-
+je_suis_a(alderaan).
 chemin(chasseur_Tie, b, corellia).
 
 chemin(corellia, u, chasseur_Tie).
+
 chemin(corellia, o, geonosis).
 
 chemin(geonosis, e, corellia).
@@ -42,14 +28,17 @@ chemin(mustafar, o, kamino).
 chemin(kamino, e, mustafar) :- il_y_a(autorisation_de_lEmpire, en_main).
 chemin(kamino, e, mustafar) :-
         write('Impossible de pénétrer sur ce secteur sans autorisations, refusé'), nl,
-
         fail.
-/* Définition de la boutique*/
+/* Définition de la boutique
 
+*/
 boutique(station).
+
 
 /* Objets disponibles dans la boutique */
 
+vie(5).
+argent(3000).
 a_vendre(canon_laser, 1000).
 a_vendre(bouclier, 3000).
 a_vendre(boost, 2000).
@@ -62,7 +51,6 @@ equipement(boost).
 equipement(munition).
 
 /* Définition des objets du jeu */
-
 il_y_a(rubis, chasseur_Tie).
 il_y_a(autorisation_de_lEmpire, geonosis).
 il_y_a(munitions, kamino).
@@ -107,114 +95,56 @@ ramasser(_) :-
 % Inventaire
 
 inventaire :-
-    write('Dataries :'), nl,
-    argent(C),
-    write(C), nl, nl,
-    write('Objets a bord'), nl,
-    possede(X),
-    name(X), write(' <'), write(X), write('> '), nl,
-    est_installe(X), write('(Installe)'),nl,
-    fail,!.
-
-inventaire.
+        possede(_),
+        write('Inventaire: '),
+        nl,
+        lister_inventaire.
 
 inventaire:-
         write('Vous ne possédez rien'),nl.
 
+lister_inventaire:-
+        possede(X),
+        tab(2),write(X),nl,
+        fail.
+        lister_inventaire.
 
 /* Règles pour acheter un objet dans la boutique*/
 acheter(X) :-
         je_suis_a(Endroit),
         boutique(Endroit),
-        il_y_a(X, Endroit),
+        at(X, Endroit),
         a_vendre(X, Prix),
-        argent(C),
+        credits(C),
         C >= Prix,
-        retract(argent(C)),
+        retract(credits(C)),
         NewC is C-Prix,
-        assert(argent(NewC)),
+        assert(credits(NewC)),
         retract(a_vendre(X, Prix)),
-        retract(il_y_a(X, Endroit)),
+        retract(at(X, Endroit)),
         assert(possede(X)),
         write('Vous avez acheté '), X, nl,
-        regarder_boutique,!.
+        browse,!.
 
 acheter(X) :-
         je_suis_a(Endroit),
         boutique(Endroit),
-        il_y_a(X, Endroit),
+        at(X, Endroit),
         a_vendre(X, Prix),
-        argent(C),
+        credits(C),
         C < Prix,
         write('Cet équipement est trop cher !'), nl,
-        regarder_boutique,!.
+        browse,!.
 
 acheter(X) :-
         je_suis_a(Endroit),
         boutique(Endroit),
         X,
         write('Cet objet n''est pas à vendre'), nl,
-        regarder_boutique,!.
+        browse,!.
 
 acheter(_) :-
         write('Il n''y a pas de boutique ici'), nl.
-
-/* Règles pour voir les objets disponibles dans la boutique */
-
-/* These rules describe how we regarder_boutique what is for a_vendre */
-
-regarder_boutique :-
-    je_suis_a(Endroit),
-    boutique(Endroit),
-    argent(C),
-    write('Available argent: '), write(C), nl, nl,
-    write('The following items are available for purchase:'), nl, nl,
-    il_y_a(X, Endroit),
-    a_vendre(X, Prix),
-    name(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
-    fail, !.
-
-regarder_boutique :-
-    je_suis_a(Endroit),
-    boutique(Endroit),
-    il_y_a(X, Endroit),
-    a_vendre(X, Prix),
-    Prix > 0,
-    !.
-
-regarder_boutique :-
-    je_suis_a(Endroit),
-    boutique(Endroit),
-    write('There is nothing for a_vendre.'), nl.
-
-regarder_boutique :-
-    write('There isn''t a boutique here'), nl.
-
-
-/* Règles pour installer un équipement */
-
-installe(X) :-
-        possede(X),
-        equipement(X),
-        est_installe(X),
-        name(X), write(' is already est_installe.'), nl,!.
-
-installe(X) :-
-        possede(X),
-        equipement(X),
-        assert(est_installe(X)),
-        name(X), write(' has been est_installe successfully.'), nl,!.
-
-installe(X) :-
-        possede(X),
-        name(X), write(' cannot be est_installe on your ship.'), nl,!.
-
-installe(X) :-
-        write('You don''t have '), name(X), nl,!.
-
-installe(_) :- 
-        write('You don''t have that object'), nl,!.
-
 
 % Règles pour laisser tomber un objet
 
@@ -265,6 +195,8 @@ regarder :-
         nl,
         lister_objets(Endroit),
         nl.
+
+
 
 
 /* Ces règles définissent une boucle pour indiquer tous les objets
