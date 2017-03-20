@@ -2,13 +2,19 @@
 
 % Prédicats dynamiques
 
-:- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, boire/1.
+:- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, boire/1, argent/1, a_vendre/1.
 :- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(vivant(_)).
 
 
 % Point de départ du joueur
+%Infos sur le joueur
+
 
 je_suis_a(alderran).
+
+vie(5).
+argent(3000).
+
 
 /* Définition de l'environnement */
 
@@ -19,6 +25,7 @@ chemin(corellia, o, geonosis).
 
 chemin(geonosis, e, corellia).
 chemin(geonosis, s, alderaan).
+
 
 chemin(alderaan, n, geonosis) :- il_y_a(munitions, en_main).
 chemin(alderaan, n, geonosis) :-
@@ -32,18 +39,32 @@ chemin(kamino, o, hoth).
 chemin(hoth, e, kamino).
 
 chemin(mustafar, o, kamino).
-chemin(kamino, e, mustafar) :- il_y_a(autorisation de lEmpire, en_main).
+chemin(kamino, e, mustafar) :- il_y_a(autorisation_de_lEmpire, en_main).
 chemin(kamino, e, mustafar) :-
-        write('Im'), nl,
-        fail.
-/* Vie de départ du joueur*/
+        write('Impossible de pénétrer sur ce secteur sans autorisations, refusé'), nl,
 
-vie(5).
+        fail.
+/* Définition de la boutique*/
+
+boutique(station).
+
+/* Objets disponibles dans la boutique */
+
+a_vendre(canon_laser, 1000).
+a_vendre(bouclier, 3000).
+a_vendre(boost, 2000).
+a_vendre(munition,100).
+
+/* Définition des équipements disponiblespour le vaisseau */
+equipement(canon_laser).
+equipement(bouclier).
+equipement(boost).
+equipement(munition).
 
 /* Définition des objets du jeu */
 
 il_y_a(rubis, chasseur_Tie).
-il_y_a(autorisation de lEmpire, geonosis).
+il_y_a(autorisation_de_lEmpire, geonosis).
 il_y_a(munitions, kamino).
 il_y_a(epee, mustafar).
 il_y_a(potion, kamino).
@@ -65,14 +86,14 @@ ramasser(X) :-
         je_suis_a(Endroit),
         il_y_a(X, Endroit),
         retract(il_y_a(X, Endroit)),
-        assert(il_y_a(X, en_main)),
+        assert(il_y_a(X, possede)),
         write('OK.'),
         !, nl.
 
 ramasser(X) :-
         je_suis_a(Endroit),
         il_y_a(X,Endroit),
-        il_y_a(_, en_main),
+        il_y_a(_, possede),
         retract(il_y_a(X, Endroit)),
         assert(possede(X)),
         write('Objet ajouté à l''inventaire'),
@@ -86,26 +107,63 @@ ramasser(_) :-
 % Inventaire
 
 inventaire :-
-        possede(X),
-        write('Inventaire:'),
+        possede(_),
+        write('Inventaire: '),
         nl,
         lister_inventaire.
 
-inventory:-
-  write('Vous ne possédez rien'),nl.
+inventaire:-
+        write('Vous ne possédez rien'),nl.
 
 lister_inventaire:-
-  possede(X),
-  tab(2),write(X),nl,
-  fail.
-lister_inventaire.
+        possede(X),
+        tab(2),write(X),nl,
+        fail.
+        lister_inventaire.
+
+/* Règles pour acheter un objet dans la boutique*/
+acheter(X) :-
+        je_suis_a(Endroit),
+        boutique(Endroit),
+        at(X, Endroit),
+        a_vendre(X, Prix),
+        credits(C),
+        C >= Prix,
+        retract(credits(C)),
+        NewC is C-Prix,
+        assert(credits(NewC)),
+        retract(a_vendre(X, Prix)),
+        retract(at(X, Endroit)),
+        assert(possede(X)),
+        write('Vous avez acheté '), X, nl,
+        browse,!.
+
+acheter(X) :-
+        je_suis_a(Endroit),
+        boutique(Endroit),
+        at(X, Endroit),
+        a_vendre(X, Prix),
+        credits(C),
+        C < Prix,
+        write('Cet équipement est trop cher !'), nl,
+        browse,!.
+
+acheter(X) :-
+        je_suis_a(Endroit),
+        boutique(Endroit),
+        X,
+        write('Cet objet n''est pas à vendre'), nl,
+        browse,!.
+
+buy(_) :-
+        write('Il n''y a pas de boutique ici'), nl.
 
 % Règles pour laisser tomber un objet
 
 deposer(X) :-
-        il_y_a(X, en_main),
+        il_y_a(X, possede),
         je_suis_a(Endroit),
-        retract(il_y_a(X, en_main)),
+        retract(il_y_a(X, possede)),
         assert(il_y_a(X, Endroit)),
         write('OK.'),
         !, nl.
@@ -151,8 +209,16 @@ regarder :-
         nl.
 
 
-/* Ces règles définissent une bouautorisation de l'Empire pour indiquer tous les objets
+
+
+/* Ces règles définissent une boucle pour indiquer tous les objets
     qui se trouvent autour de vous */
+lister_equipement() :-
+            il_y_a(X, possede),
+            write('Il y a un(e) '), write(X), write(' dans vos mains.'), nl,
+            fail.
+
+lister_equipement().
 
 lister_objets(Endroit) :-
         il_y_a(X, Endroit),
@@ -178,7 +244,7 @@ attaquer :-
         il_y_a(epee, en_main),
         retract(vivant(chasseur_Tie)),
         write('Vous frappez sauvagement l''araignée avec votre épée.'), nl,
-        write('A chaque coup, un liquide gluant sorti de ses entrailles vous giautorisation de l'Empire à la figure.'), nl,
+        write('A chaque coup, un liquide gluant sorti de ses entrailles vous giautorisation_de_lEmpire à la figure.'), nl,
         write('Il semble bien que vous l''ayez tuée.'),
         nl, !.
 
@@ -242,8 +308,10 @@ demarrer :-
 
 /* Règles pour afficher la ou les description(s) des piéces */
 
+
 decrire(alderaan) :-
-        il_y_a(rubis, en_main),
+        il_y_a(rubis, possede),
+
         write('Bravo ! Vous avez récupéré le rubis et gagné la partie'), nl,
         terminer, !.
 
@@ -271,7 +339,7 @@ decrire(geonosis) :-
 
 decrire(corellia) :-
         vivant(chasseur_Tie),
-        il_y_a(rubis, en_main),
+        il_y_a(rubis, possede),
         write('L''araignée vous aperçoit avec le rubis et attaque !!'), nl,
         write('C''est un véritable carnage...'), nl,
         mourir.
