@@ -49,8 +49,6 @@ boutique(station).
 
 /* Objets disponibles dans la boutique */
 
-vie(5).
-argent(3000).
 a_vendre(canon_laser, 1000).
 a_vendre(bouclier, 3000).
 a_vendre(boost, 2000).
