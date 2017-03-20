@@ -14,8 +14,6 @@ vie(5).
 argent(3000).
 
 /* Définition de l'environnement */
-
-je_suis_a(alderaan).
 chemin(chasseur_Tie, b, corellia).
 
 chemin(corellia, u, chasseur_Tie).
