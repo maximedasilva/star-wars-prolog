@@ -6,33 +6,39 @@
 
 % Point de départ du joueur
 %Infos sur le joueur
-
+je_suis_a(alderaan).
 
 
 
 vie(5).
 argent(3000).
-je_suis_a(alderaan).
+
 /* Définition de l'environnement */
 chemin(chasseur_Tie, b, corellia).
 
 chemin(corellia, u, chasseur_Tie).
+chemin(chasseur_Tie,n,yavin_IV).
+chemin(yavin_IV,s,chasseur_Tie).
 
 chemin(corellia, o, geonosis).
 
-chemin(geonosis, e, corellia).
+chemin(geonosis, e, corellia):- il_y_a(munitions,possede).
+chemin(geonosis,e, corellia):-
+        write('Aller dans la zone controllee par l''empire sans munitions ou canon laser est une mission suicide, refusé'),nl,
+        fail.
 chemin(geonosis, s, alderaan).
+chemin(geonosis,o,tatooine).
+chemin(tatooine,e,geonosis).
+chemin(tatooine,u,rebelle).
+chemin(rebelle,b,tatooine).
+chemin(alderaan, n, geonosis).
 
-chemin(alderaan, n, geonosis) :- il_y_a(munitions, possede).
-chemin(alderaan, n, geonosis) :-
-        write('Pénétrer dans le secteur contrôllé par l\'empire sans munitions est une mission suicide, refusé!'), nl,
-        !, fail.
 chemin(alderaan, s, kamino).
 
 chemin(kamino, n, alderaan).
-chemin(kamino, o, hoth).
+chemin(kamino, b, hoth).
 
-chemin(hoth, e, kamino).
+chemin(hoth, u, kamino).
 
 chemin(mustafar, o, kamino).
 chemin(kamino, e, mustafar) :- il_y_a(autorisation_de_lEmpire, possede).
@@ -59,17 +65,18 @@ equipement(boost).
 equipement(munition).
 
 /* Définition des objets du jeu */
-il_y_a(rubis, chasseur_Tie).
-il_y_a(fraise,alderaan).
+il_y_a(rubis, yavin_IV).
 il_y_a(autorisation_de_lEmpire, geonosis).
-il_y_a(munitions, kamino).
-il_y_a(epee, mustafar).
-il_y_a(potion, kamino).
+il_y_a(invisibilite,rebelle).
+il_y_a(boutique2,tatooine).
+il_y_a(boutique1,hoth).
+
 
 
 /* Définition des NPC vivants */
 
 vivant(chasseur_Tie).
+vivant(rebelle)
 
 
 % Règles pour ramasser un objet
@@ -192,7 +199,7 @@ aller(Direction) :-
         !, regarder.
 
 aller(_) :-
-        write('Vous ne pouvez pas aller dans cette direction, vous êtes déjà sur la bordure extérieure du système.').
+        write('Vous ne pouvez pas aller dans cette direction').
 
 
 /* Règle pour regarder autour de soi */
@@ -211,14 +218,14 @@ regarder :-
     qui se trouvent autour de vous */
 lister_equipement() :-
             il_y_a(X, possede),
-            write('Il y a un(e) '), write(X), write(' dans vos mains.'), nl,
+            write('Votre vaisseau est équipé de '), write(X), nl,
             fail.
 
 lister_equipement().
 
 lister_objets(Endroit) :-
         il_y_a(X, Endroit),
-        write('Il y a un(e) '), write(X), write(' ici.'), nl,
+        write('Il y a un(e) '), write(X), write(' dans cette zone du système.'), nl,
         fail.
 
 lister_objets(_).
@@ -227,21 +234,29 @@ lister_objets(_).
 /* Règles pour tuer les NPC */
 
 attaquer :-
-        je_suis_a(hoth),
-        write('Mauvaise idée ! Vous venez d''être mangé(e) par le lion.'), nl,
-        !, mourir.
+        je_suis_a(rebelle),
 
+        write('Vous venez d''être capturé par les rebelles de naboo.'), nl,
+        !, mourir.
+attaquer :-
+        je_suis_a(rebelle),
+        possede(munitions),
+        est_installe(canon_laser),
+        retract(vivant(rebelle)),
+        write('En attérissant à naboo vous tuez la faible résistance rebelle de '), nl,
+        !, mourir.
 attaquer :-
         je_suis_a(corellia),
-        write('Ca ne marche pas. Cette araignée a les pattes trop solides.').
+        write('Comment voulez vous attaquer sans munitions?').
 
 attaquer :-
         je_suis_a(chasseur_Tie),
-        il_y_a(epee, en_main),
+        possede(munitions),
+        est_installe(canon_laser),
         retract(vivant(chasseur_Tie)),
-        write('Vous frappez sauvagement l''araignée avec votre épée.'), nl,
-        write('A chaque coup, un liquide gluant sorti de ses entrailles vous giautorisation_de_lEmpire à la figure.'), nl,
-        write('Il semble bien que vous l''ayez tuée.'),
+        write('Vous vous mettez en position de combat contre ce chasseur imperial'), nl,
+        write('Un combat epique démarre, les coups de canon lasers fusent et après une énième manoeuvre, vous réussissez à vous placer derrière lui'), nl,
+        write('Vous tirez, il explose dans un spectacle lumineux.'),
         nl, !.
 
 attaquer :-
@@ -307,7 +322,7 @@ demarrer :-
 
 decrire(alderaan) :-
         possede(rubis),
-        write('Bravo ! Vous avez récupéré le rubis et gagné la partie'), nl,
+        write('Bravo ! Vous avez récupéré les plans de l''etoile de la mort et gagné la partie'), nl,
         terminer, !.
 
 decrire(alderaan) :-
