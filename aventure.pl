@@ -8,11 +8,11 @@
 %Infos sur le joueur
 
 
-je_suis_a(alderran).
+
 
 vie(5).
 argent(3000).
-
+je_suis_a(alderaan).
 /* Définition de l'environnement */
 chemin(chasseur_Tie, b, corellia).
 
