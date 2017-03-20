@@ -15,7 +15,6 @@ je_suis_a(alderran).
 vie(5).
 argent(3000).
 
-
 /* Définition de l'environnement */
 
 chemin(chasseur_Tie, b, corellia).
@@ -27,7 +26,7 @@ chemin(geonosis, e, corellia).
 chemin(geonosis, s, alderaan).
 
 
-chemin(alderaan, n, geonosis) :- il_y_a(munitions, en_main).
+chemin(alderaan, n, geonosis) :- il_y_a(munitions, possede).
 chemin(alderaan, n, geonosis) :-
         write('Pénétrer dans le secteur contrôllé par l\'empire sans munitions est une mission suicide, refusé!'), nl,
         !, fail.
@@ -39,7 +38,7 @@ chemin(kamino, o, hoth).
 chemin(hoth, e, kamino).
 
 chemin(mustafar, o, kamino).
-chemin(kamino, e, mustafar) :- il_y_a(autorisation_de_lEmpire, en_main).
+chemin(kamino, e, mustafar) :- il_y_a(autorisation_de_lEmpire, possede).
 chemin(kamino, e, mustafar) :-
         write('Impossible de pénétrer sur ce secteur sans autorisations, refusé'), nl,
 
@@ -64,6 +63,7 @@ equipement(munition).
 /* Définition des objets du jeu */
 
 il_y_a(rubis, chasseur_Tie).
+il_y_a(fraise,alderaan).
 il_y_a(autorisation_de_lEmpire, geonosis).
 il_y_a(munitions, kamino).
 il_y_a(epee, mustafar).
@@ -78,7 +78,7 @@ vivant(chasseur_Tie).
 % Règles pour ramasser un objet
 
 ramasser(X) :-
-        il_y_a(X, en_main),
+        possede(X),
         write('Il est déjà dans votre vaisseau!'),
         !, nl.
 
@@ -86,7 +86,7 @@ ramasser(X) :-
         je_suis_a(Endroit),
         il_y_a(X, Endroit),
         retract(il_y_a(X, Endroit)),
-        assert(il_y_a(X, possede)),
+        assert(possede(X)),
         write('OK.'),
         !, nl.
 
@@ -98,7 +98,6 @@ ramasser(X) :-
         assert(possede(X)),
         write('Objet ajouté à l''inventaire'),
         nl.
-
 
 ramasser(_) :-
         write('Ce secteur semble vide'),
@@ -366,7 +365,7 @@ demarrer :-
 
 
 decrire(alderaan) :-
-        il_y_a(rubis, possede),
+        possede(rubis),
 
         write('Bravo ! Vous avez récupéré le rubis et gagné la partie'), nl,
         terminer, !.
