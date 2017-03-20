@@ -8,34 +8,33 @@
 
 % Point de départ du joueur
 
-je_suis_a(prairie).
+je_suis_a(alderran).
 
 /* Définition de l'environnement */
 
-chemin(araignee, b, caverne).
+chemin(chasseur_Tie, b, corellia).
 
-chemin(caverne, u, araignee).
-chemin(caverne, o, entree_caverne).
+chemin(corellia, u, chasseur_Tie).
+chemin(corellia, o, geonosis).
 
-chemin(entree_caverne, e, caverne).
-chemin(entree_caverne, s, prairie).
+chemin(geonosis, e, corellia).
+chemin(geonosis, s, alderaan).
 
-chemin(prairie, n, entree_caverne) :- il_y_a(torche, en_main).
-chemin(prairie, n, entree_caverne) :-
-        write('Pénétrer dans cette caverne sans torche ? Vous êtes fou ou quoi ?'), nl,
+chemin(alderaan, n, geonosis) :- il_y_a(munitions, en_main).
+chemin(alderaan, n, geonosis) :-
+        write('Pénétrer dans le secteur contrôllé par l\'empire sans munitions est une mission suicide, refusé!'), nl,
         !, fail.
-chemin(prairie, s, batiment).
+chemin(alderaan, s, kamino).
 
-chemin(batiment, n, prairie).
-chemin(batiment, o, taniere).
+chemin(kamino, n, alderaan).
+chemin(kamino, o, hoth).
 
-chemin(taniere, e, batiment).
+chemin(hoth, e, kamino).
 
-chemin(armoire, o, batiment).
-
-chemin(batiment, e, armoire) :- il_y_a(cle, en_main).
-chemin(batiment, e, armoire) :-
-        write('La porte semble fermée à clé.'), nl,
+chemin(mustafar, o, kamino).
+chemin(kamino, e, mustafar) :- il_y_a(autorisation de lEmpire, en_main).
+chemin(kamino, e, mustafar) :-
+        write('Im'), nl,
         fail.
 /* Vie de départ du joueur*/
 
@@ -43,23 +42,23 @@ vie(5).
 
 /* Définition des objets du jeu */
 
-il_y_a(rubis, araignee).
-il_y_a(cle, entree_caverne).
-il_y_a(torche, batiment).
-il_y_a(epee, armoire).
-il_y_a(potion, batiment).
+il_y_a(rubis, chasseur_Tie).
+il_y_a(autorisation de lEmpire, geonosis).
+il_y_a(munitions, kamino).
+il_y_a(epee, mustafar).
+il_y_a(potion, kamino).
 
 
 /* Définition des NPC vivants */
 
-vivant(araignee).
+vivant(chasseur_Tie).
 
 
 % Règles pour ramasser un objet
 
 ramasser(X) :-
         il_y_a(X, en_main),
-        write('Vous le tenez déjà !'),
+        write('Il est déjà dans votre vaisseau!'),
         !, nl.
 
 ramasser(X) :-
@@ -76,12 +75,12 @@ ramasser(X) :-
         il_y_a(_, en_main),
         retract(il_y_a(X, Endroit)),
         assert(possede(X)),
-        write('Objet ajouté à l''inventaire'), 
+        write('Objet ajouté à l''inventaire'),
         nl.
 
 
 ramasser(_) :-
-        write('Je ne vois rien ici.'),
+        write('Ce secteur semble vide'),
         nl.
 
 % Inventaire
@@ -112,7 +111,7 @@ deposer(X) :-
         !, nl.
 
 deposer(_) :-
-        write('Vous ne le tenez pas !'),
+        write('Vous ne le l''avez pas !'),
         nl.
 
 /* These rules define the direction letters as calls to aller/1. */
@@ -139,7 +138,7 @@ aller(Direction) :-
         !, regarder.
 
 aller(_) :-
-        write('Vous ne pouvez pas aller dans cette direction.').
+        write('Vous ne pouvez pas aller dans cette direction, vous êtes déjà sur la bordure extérieure du système.').
 
 
 /* Règle pour regarder autour de soi */
@@ -152,7 +151,7 @@ regarder :-
         nl.
 
 
-/* Ces règles définissent une boucle pour indiquer tous les objets
+/* Ces règles définissent une bouautorisation de l'Empire pour indiquer tous les objets
     qui se trouvent autour de vous */
 
 lister_objets(Endroit) :-
@@ -166,25 +165,25 @@ lister_objets(_).
 /* Règles pour tuer les NPC */
 
 attaquer :-
-        je_suis_a(taniere),
+        je_suis_a(hoth),
         write('Mauvaise idée ! Vous venez d''être mangé(e) par le lion.'), nl,
         !, mourir.
 
 attaquer :-
-        je_suis_a(caverne),
+        je_suis_a(corellia),
         write('Ca ne marche pas. Cette araignée a les pattes trop solides.').
 
 attaquer :-
-        je_suis_a(araignee),
+        je_suis_a(chasseur_Tie),
         il_y_a(epee, en_main),
-        retract(vivant(araignee)),
+        retract(vivant(chasseur_Tie)),
         write('Vous frappez sauvagement l''araignée avec votre épée.'), nl,
-        write('A chaque coup, un liquide gluant sorti de ses entrailles vous gicle à la figure.'), nl,
+        write('A chaque coup, un liquide gluant sorti de ses entrailles vous giautorisation de l'Empire à la figure.'), nl,
         write('Il semble bien que vous l''ayez tuée.'),
         nl, !.
 
 attaquer :-
-        je_suis_a(araignee),
+        je_suis_a(chasseur_Tie),
         write('Frapper l''araignée avec vos petits poings n''a absolument aucun effet.'), nl.
 
 attaquer :-
@@ -243,53 +242,53 @@ demarrer :-
 
 /* Règles pour afficher la ou les description(s) des piéces */
 
-decrire(prairie) :-
+decrire(alderaan) :-
         il_y_a(rubis, en_main),
         write('Bravo ! Vous avez récupéré le rubis et gagné la partie'), nl,
         terminer, !.
 
-decrire(prairie) :-
-        write('Vous vous trouvez dans une prairie. Au nord se trouve l''entrée'), nl,
-        write('d''une sombre caverne; au sud, un petit bâtiment.'), nl,
+decrire(alderaan) :-
+        write('Vous vous trouvez dans une alderaan. Au nord se trouve l''entrée'), nl,
+        write('d''une sombre corellia; au sud, un petit bâtiment.'), nl,
         write('Votre objectif est de récupérer le célèbre rubis de Bap-El-Paf'), nl,
         write('et de revenir ici en vie.'), nl.
 
-decrire(batiment) :-
+decrire(kamino) :-
         write('Vous êtes dans un petit bâtiment. La sortie se trouve au nord.'), nl,
         write('Il y a une grille à l''ouest qui ne semble par fermée à clé.' ), nl,
         write('Il y a une plus petite porte à l''est.'), nl.
 
-decrire(taniere) :-
+decrire(hoth) :-
         write('Vous êtes dans la tanière d''un lion qui semble plutôt affamé.'), nl,
         write('Il serait plus judicieux de partir vite...'), nl.
 
-decrire(armoire) :-
-        write('Il n''y a rien d''autre qu''une vieille armoire.'), nl.
+decrire(mustafar) :-
+        write('Il n''y a rien d''autre qu''une vieille mustafar.'), nl.
 
-decrire(entree_caverne) :-
-        write('Vous êtes à l''entrée d''une sombre caverne. La sortie est au sud.'), nl,
+decrire(geonosis) :-
+        write('Vous êtes à l''entrée d''une sombre corellia. La sortie est au sud.'), nl,
         write('Il y a un large passage circulaire à l''est.'), nl.
 
-decrire(caverne) :-
-        vivant(araignee),
+decrire(corellia) :-
+        vivant(chasseur_Tie),
         il_y_a(rubis, en_main),
         write('L''araignée vous aperçoit avec le rubis et attaque !!'), nl,
         write('C''est un véritable carnage...'), nl,
         mourir.
 
-decrire(caverne) :-
-        vivant(araignee),
+decrire(corellia) :-
+        vivant(chasseur_Tie),
         write('Il y a une énorme araignée ici !'), nl,
         write('L''une de ses pattes velues est directement devant vous !'), nl,
         write('Vous pourriez l''utiliser pour grimper sur son dos.'), nl,
         write('Cela dit, la fuite est parfois est la meilleure solution...'), nl, !.
 
-decrire(caverne) :-
+decrire(corellia) :-
         write('Beurk ! Il y a un énorme cadavre d''araignée ici.'), nl.
 
-decrire(araignee) :-
-        vivant(araignee),
+decrire(chasseur_Tie) :-
+        vivant(chasseur_Tie),
         write('Vous êtes sur le dos de l''araignée. L''odeur est épouvantable.'), nl.
 
-decrire(araignee) :-
+decrire(chasseur_Tie) :-
         write('Vous êtes sur le dos d''une énorme araignée morte. C''est répugnant.'), nl.
