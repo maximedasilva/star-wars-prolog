@@ -1,5 +1,5 @@
 % Prédicats dynamiques
-
+:- encoding(utf8).
 :- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, boire/1, argent/1, a_vendre/1, est_installe/1.
 :- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(vivant(_)).
 
