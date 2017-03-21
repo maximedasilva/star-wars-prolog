@@ -246,24 +246,10 @@ browse :-
     je_suis_a(Endroit),
     boutique1(Endroit);
     boutique2(Endroit),
-    write('There is nothing for a_vendre1.'), nl.
+    write('Il n''y a rien à vendre ici !), nl.
 
 browse :-
-    write('There isn''t a boutique here'), nl.
-
-% Règles pour laisser tomber un objet
-
-deposer(X) :-
-        il_y_a(X, possede),
-        je_suis_a(Endroit),
-        retract(il_y_a(X, possede)),
-        assert(il_y_a(X, Endroit)),
-        write('OK.'),
-        !, nl.
-
-deposer(_) :-
-        write('Vous ne le l''avez pas !'),
-        nl.
+    write('Aucune boutique en vue.'), nl.
 
 /* These rules define the direction letters as calls to aller/1. */
 
@@ -296,26 +282,25 @@ aller(_) :-
 regarder :-
         je_suis_a(Endroit),
         decrire(Endroit),
-        nl,
-        lister_objets(Endroit),
         nl.
 
 
 /* Ces règles définissent une boucle pour indiquer tous les objets
-    qui se trouvent autour de vous */
+    qui se trouvent dans votre vaisseau */
 lister_equipement() :-
             il_y_a(X, possede),
-            write('Il y a un(e) '), write(X), write(' dans vos mains.'), nl,
+            write('Il y a un(e) '), write(X), write(' dans votre vaisseau'), nl,
             fail.
 
 lister_equipement().
 
-lister_objets(Endroit) :-
+scanner :-
+        je_suis_a(Endroit),
         il_y_a(X, Endroit),
-        write('Il y a un(e) '), write(X), write(' ici.'), nl,
+        write('Votre scanner vous indique qu'il y a un(e)), write(X), write(' sur cette planète.'), nl,
         fail.
 
-lister_objets(_).
+scanner(_).
 
 
 /* Règles pour tuer les NPC */
