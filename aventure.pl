@@ -246,7 +246,7 @@ browse :-
     je_suis_a(Endroit),
     boutique1(Endroit);
     boutique2(Endroit),
-    write('Il n''y a rien à vendre ici !), nl.
+    write('Il n''y a rien à vendre ici !'), nl.
 
 browse :-
     write('Aucune boutique en vue.'), nl.
@@ -297,7 +297,7 @@ lister_equipement().
 scanner :-
         je_suis_a(Endroit),
         il_y_a(X, Endroit),
-        write('Votre scanner vous indique qu'il y a un(e)), write(X), write(' sur cette planète.'), nl,
+        write('Votre scanner vous indique qu''il y a un(e) '), write(X), write(' sur cette planète.'), nl,
         fail.
 
 scanner(_).
@@ -411,7 +411,7 @@ decrire(mustafar) :-
         write('Ses paysages n''ont pas l''air très acceuillants...'),nl.
 
 decrire(geonosis) :-
-        write('Monde rocheux situé à moins d'un parsec de Tatooine,'), nl,
+        write('Monde rocheux situé à moins d''un parsec de Tatooine '), nl,
         write('Geonosis est une planète se trouvant au delà des frontières de la République Galactique.'), nl,
         write('Sa surface peu engageante est dominée par les rochers, les crevasses et les déserts.'),nl.
 
