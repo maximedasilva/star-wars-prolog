@@ -293,7 +293,6 @@ aller(_) :-
 
 
 /* Règle pour regarder autour de soi */
-
 regarder :-
         je_suis_a(Endroit),
         decrire(Endroit),
@@ -386,7 +385,14 @@ mode_emploi :-
         write('regarder.          -- pour regarder de nouveau autour de vous.'), nl,
         write('attaquer.          -- pour attaquer un ennemi.'), nl,
         write('mode_emploi.       -- pour afficher le mode d''emploi de nouveau.'), nl,
-        write('terminer.          -- pour terminer la partie.'), nl,
+        write('terminer.          -- pour terminer la partie.'), nl,nl,
+        write('L''Empire prépare une nouvelle attaque contre les populations libres de la Galaxie.'),nl,
+        write('Sa nouvelle arme de destruction serait appelée Etoile Noire. '),nl,
+        write('Vous êtes l''un des meilleurs pilotes de X-Wing de la Galaxie'),nl,
+        write('Votre but sera de vous introduire dans l''Etoile Noire afin de la détruire.'),nl,
+        write('Pour cela, il vous faudra réunir des équipements indispensables pour votre vaisseau '),nl,
+        write('ainsi que les plans de l''Etoile Noire.'),nl,
+        write('Votre mission sera dangereuse, prenez garde...'),nl,
         nl.
 
 
@@ -399,33 +405,30 @@ demarrer :-
 
 /* Règles pour afficher la ou les description(s) des piéces */
 
-
 decrire(alderaan) :-
-        possede(rubis),
-        write('Bravo ! Vous avez récupéré le rubis et gagné la partie'), nl,
-        terminer, !.
-
-decrire(alderaan) :-
-        write('Vous vous trouvez dans une alderaan. Au nord se trouve l''entrée'), nl,
-        write('d''une sombre corellia; au sud, un petit bâtiment.'), nl,
-        write('Votre objectif est de récupérer le célèbre rubis de Bap-El-Paf'), nl,
-        write('et de revenir ici en vie.'), nl.
+        write('Alderaan est le QG principal des forces rebelles se battant contre l''Empire.'), nl,
+        write('Son climat est doux et ses paysages charmants.'), nl,
+        write('Malheureusement, Alderaan pourrait bientôt disparaître à cause de l''Empire...'), nl.
 
 decrire(kamino) :-
-        write('Vous êtes dans un petit bâtiment. La sortie se trouve au nord.'), nl,
-        write('Il y a une grille à l''ouest qui ne semble par fermée à clé.' ), nl,
-        write('Il y a une plus petite porte à l''est.'), nl.
+        write('Kamino est une planète aquatique située au-delà des Territoires de la Bordure Extérieure, dans l''Espace Sauvage.'),nl,
+        write('Ses immensités bleues peuvent parfois vous faire perdre la tête...'),nl,
+        write('Il s''agit de la planète d''origine des Kaminoens.'), nl.
 
 decrire(hoth) :-
-        write('Vous êtes dans la tanière d''un lion qui semble plutôt affamé.'), nl,
-        write('Il serait plus judicieux de partir vite...'), nl.
+        write('Comme son nom ne l''indique pas, Hoth est un monde recouvert de neige et de glace.'), nl,
+        write('Constamment frappée par les météorites, elle n''a développé aucune forme de vie intelligente '),nl,
+        write('mais possède néanmoins quelques formes de vie animales, comme le Tauntaun ou le Wampa.'),nl.
 
 decrire(mustafar) :-
-        write('Il n''y a rien d''autre qu''une vieille mustafar.'), nl.
+        write('Située loin dans la Bordure Extérieure, la planète volcanique Mustafar est '),nl,
+        write('constamment en mouvement, attirée par deux planètes gazeuses.'), nl,
+        write('Ses paysages n''ont pas l''air très acceuillants...'),nl.
 
 decrire(geonosis) :-
-        write('Vous êtes à l''entrée d''une sombre corellia. La sortie est au sud.'), nl,
-        write('Il y a un large passage circulaire à l''est.'), nl.
+        write('Monde rocheux situé à moins d'un parsec de Tatooine,'), nl,
+        write('Geonosis est une planète se trouvant au delà des frontières de la République Galactique.'), nl,
+        write('Sa surface peu engageante est dominée par les rochers, les crevasses et les déserts.'),nl.
 
 decrire(corellia) :-
         vivant(chasseur_Tie),
@@ -442,11 +445,17 @@ decrire(corellia) :-
         write('Cela dit, la fuite est parfois est la meilleure solution...'), nl, !.
 
 decrire(corellia) :-
-        write('Beurk ! Il y a un énorme cadavre d''araignée ici.'), nl.
+        write('Corellia est pour beaucoup synonyme de technologie et de voyage spatial.'),nl, 
+        write('Pour d''autres cette planète est le symbole des fauteurs de trouble et '), nl,
+        write('de tout ce que l''univers compte de hors-la-loi.'),nl.
 
 decrire(chasseur_Tie) :-
         vivant(chasseur_Tie),
-        write('Vous êtes sur le dos de l''araignée. L''odeur est épouvantable.'), nl.
+        possede(munition),
+        write('Un groupe de chasseurs Tie de l''Empire vous repère et commence à vous attaquer !'),nl,
+        write('Heureusement vous disposez de votre canon et de vos munitions et vous les détruisez'), nl.
 
 decrire(chasseur_Tie) :-
-        write('Vous êtes sur le dos d''une énorme araignée morte. C''est répugnant.'), nl.
+        write('Un groupe de chasseurs Tie de l''Empire vous repère et commence à vous attaquer !'), nl,
+        write('Vous n''avez aucun moyen de vous défendre... Leurs canons sont surpuissants, votre vaisseau vole en éclats'), nl,
+        mourir.
