@@ -1,5 +1,9 @@
-% Prédicats dynamiques
+%Encodage utf8
+
 :- encoding(utf8).
+
+% Prédicats dynamiques
+
 :- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, boire/1, argent/1, a_vendre/1, est_installe/1.
 :- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(vivant(_)).
 
@@ -21,7 +25,7 @@ chemin(corellia, o, geonosis).
 chemin(geonosis, e, corellia).
 chemin(geonosis, s, alderaan).
 
-chemin(alderaan, n, geonosis) :- il_y_a(munitions, possede).
+chemin(alderaan, n, geonosis) :- possede(munitions).
 chemin(alderaan, n, geonosis) :-
         write('Pénétrer dans le secteur contrôllé par l\'empire sans munitions est une mission suicide, refusé!'), nl,
         !, fail.
@@ -33,28 +37,30 @@ chemin(kamino, o, hoth).
 chemin(hoth, e, kamino).
 
 chemin(mustafar, o, kamino).
-chemin(kamino, e, mustafar) :- il_y_a(autorisation_de_lEmpire, possede).
+chemin(kamino, e, mustafar) :- possede(autorisation_de_lEmpire).
 chemin(kamino, e, mustafar) :-
         write('Impossible de pénétrer sur ce secteur sans autorisations, refusé'), nl,
         fail.
-
-/* Définition de la boutique */
+/* Définition des noms des objets */
+nom(munitions) :- write('Munitions pour le canon du X-Wing'),nl.
+nom(autorisation_de_lEmpire) :- write('Autorisation de l''Empire pour pénétrer dans l''Etoile Noire'),nl.
+/* Définition des boutiques */
 
 boutique1(hoth).
 boutique2(tatooine).
 
-/* Objets disponibles dans la boutique */
+/* Objets disponibles dans les boutiques */
 
 a_vendre2(canon_laser, 1000).
 a_vendre2(bouclier, 3000).
 a_vendre1(boost, 2000).
-a_vendre1(munition,100).
+a_vendre1(munitions,100).
 
-/* Définition des équipements disponiblespour le vaisseau */
+/* Définition des équipements disponibles pour le vaisseau */
 equipement(canon_laser).
 equipement(bouclier).
 equipement(boost).
-equipement(munition).
+equipement(munitions).
 equipement(invisibilite).
 
 /* Définition des objets du jeu */
@@ -82,30 +88,20 @@ ramasser(X) :-
         il_y_a(X, Endroit),
         retract(il_y_a(X, Endroit)),
         assert(possede(X)),
-        write('OK.'),
+        write('Vous venez de récupérer '), write(X),
         !, nl.
-
-ramasser(X) :-
-        je_suis_a(Endroit),
-        il_y_a(X,Endroit),
-        il_y_a(_, possede),
-        retract(il_y_a(X, Endroit)),
-        assert(possede(X)),
-        write('Objet ajouté à l''inventaire'),
-        nl.
 
 ramasser(_) :-
         write('Ce secteur semble vide'),
         nl.
-
 % Inventaire
 inventaire :-
     write('Argent:'), nl,
     argent(C),
     write(C), nl, nl,
-    write('Items in Cargo Hold:'), nl,
+    write('Objets présents dans le vaisseau :'), nl,
     possede(X),
-    name(X), write(' <'), write(X), write('> '), nl,
+    nom(X), write(' <'), write(X), write('> '), nl,
     est_installe(X), write('(installe)'),nl,
     fail,!.
 
@@ -122,7 +118,7 @@ installer(X) :-
 installer(X) :-
         possede(X),
         equipement(X),
-        X == munition,
+        X == munitions,
         write('Vous ne pouvez pas installer de munitions'),nl,!.
 
 installer(X) :-
@@ -436,7 +432,7 @@ decrire(corellia) :-
 
 decrire(chasseur_Tie) :-
         vivant(chasseur_Tie),
-        possede(munition),
+        possede(munitions),
         write('Un groupe de chasseurs Tie de l''Empire vous repère et commence à vous attaquer !'),nl,
         write('Heureusement vous disposez de votre canon et de vos munitions et vous les détruisez'), nl.
 
