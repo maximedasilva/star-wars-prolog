@@ -4,7 +4,7 @@
 
 % Prédicats dynamiques
 
-:- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, boire/1, argent/1, a_vendre/1, est_installe/1.
+:- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, argent/1, a_vendre/1, est_installe/1.
 :- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(vivant(_)).
 
 
@@ -56,6 +56,7 @@ chemin(naboo,b,tatooine).
 /* Définition des noms des objets */
 nom(munitions) :- write('Munitions pour le canon du X-Wing'),nl.
 nom(autorisation_de_lEmpire) :- write('Autorisation de l''Empire pour pénétrer dans l''Etoile Noire'),nl.
+nom(boost) :- write('Un boost vous permettant d''atteindre la vitesse de la lumière'),nl.
 /* Définition des boutiques */
 
 boutique1(hoth).
@@ -82,6 +83,10 @@ il_y_a(autorisation_de_lEmpire, geonosis).
 il_y_a(munitions, kamino).
 il_y_a(epee, mustafar).
 il_y_a(potion, kamino).
+il_y_a(munitions,hoth).
+il_y_a(boost,hoth).
+il_y_a(canon_laser,tatooine).
+il_y_a(invisibilite,naboo).
 
 
 /* Définition des NPC vivants */
@@ -106,7 +111,8 @@ ramasser(X) :-
 ramasser(_) :-
         write('Ce secteur semble vide'),
         nl.
-% Inventaire
+        
+% Liste les objets de l'Inventaire
 inventaire :-
     write('Argent:'), nl,
     argent(C),
@@ -125,7 +131,7 @@ installer(X) :-
         possede(X),
         equipement(X),
         est_installe(X),
-        name(X), write(' is already est_installe.'), nl,!.
+        nom(X), write(' is already est_installe.'), nl,!.
 
 installer(X) :-
         possede(X),
@@ -137,14 +143,14 @@ installer(X) :-
         possede(X),
         equipement(X),
         assert(est_installe(X)),
-        name(X), write(' has been est_installe successfully.'), nl,!.
+        nom(X), write(' has been est_installe successfully.'), nl,!.
 
 installer(X) :-
         possede(X),
-        name(X), write(' cannot be est_installe on your ship.'), nl,!.
+        nom(X), write(' cannot be est_installe on your ship.'), nl,!.
 
 installer(X) :-
-        write('You don''t have '), name(X), nl,!.
+        write('You don''t have '), nom(X), nl,!.
 
 installer(_) :-
         write('You don''t have that object'), nl,!.
@@ -164,7 +170,7 @@ acheter(X) :-
         retract(il_y_a(X, Endroit)),
         assert(possede(X)),
         write('Vous avez acheté '), X, nl,
-        browse,!.
+        consulter,!.
 
 acheter(X) :-
         je_suis_a(Endroit),
@@ -174,7 +180,7 @@ acheter(X) :-
         argent(C),
         C < Prix,
         write('Cet équipement est trop cher !'), nl,
-        browse,!.
+        consulter,!.
 acheter(X) :-
         je_suis_a(Endroit),
         boutique2(Endroit),
@@ -189,7 +195,7 @@ acheter(X) :-
         retract(il_y_a(X, Endroit)),
         assert(possede(X)),
         write('Vous avez acheté '), X, nl,
-        browse,!.
+        consulter,!.
 
 acheter(X) :-
         je_suis_a(Endroit),
@@ -199,20 +205,20 @@ acheter(X) :-
         argent(C),
         C < Prix,
         write('Cet équipement est trop cher !'), nl,
-        browse,!.
+        consulter,!.
 acheter(X) :-
         je_suis_a(Endroit),
         boutique1(Endroit),
         boutique2(Endroit),
         X,
         write('Cet objet n''est pas à vendre'), nl,
-        browse,!.
+        consulter,!.
 
 acheter(_) :-
         write('Il n''y a pas de boutique ici'), nl.
 
-/* Règles pour regarder les objets de la boutique sans en acheter */
-browse :-
+/* Règles pour consulter les objets de la boutique sans en acheter */
+consulter :-
     je_suis_a(Endroit),
     boutique1(Endroit),
     argent(C),
@@ -220,10 +226,10 @@ browse :-
     write('The following items are available for purchase:'), nl, nl,
     il_y_a(X, Endroit),
     a_vendre1(X, Prix),
-    name(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
+    nom(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
     fail, !.
 
-browse :-
+consulter :-
     je_suis_a(Endroit),
     boutique1(Endroit),
     il_y_a(X, Endroit),
@@ -231,7 +237,7 @@ browse :-
     Prix > 0,
     !.
 
-browse :-
+consulter :-
     je_suis_a(Endroit),
     boutique2(Endroit),
     argent(C),
@@ -239,10 +245,10 @@ browse :-
     write('The following items are available for purchase:'), nl, nl,
     il_y_a(X, Endroit),
     a_vendre2(X, Prix),
-    name(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
+    nom(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
     fail, !.
 
-browse :-
+consulter :-
     je_suis_a(Endroit),
     boutique2(Endroit),
     il_y_a(X, Endroit),
@@ -250,13 +256,13 @@ browse :-
     Prix > 0,
     !.
 
-browse :-
+consulter :-
     je_suis_a(Endroit),
     boutique1(Endroit);
     boutique2(Endroit),
     write('Il n''y a rien à vendre ici !'), nl.
 
-browse :-
+consulter :-
     write('Aucune boutique en vue.'), nl.
 
 /* These rules define the direction letters as calls to aller/1. */
@@ -292,21 +298,10 @@ regarder :-
         decrire(Endroit),
         nl.
 
-
-/* Ces règles définissent une boucle pour indiquer tous les objets
-    qui se trouvent dans votre vaisseau */
-lister_equipement() :-
-            il_y_a(X, possede),
-            write('Il y a un(e) '), write(X), write(' dans votre vaisseau'), nl,
-            fail.
-
-lister_equipement().
-
 scanner :-
         je_suis_a(Endroit),
         il_y_a(X, Endroit),
-        write('Votre scanner vous indique qu''il y a un(e) '), write(X), write(' sur cette planète.'), nl,
-        fail.
+        write('Votre scanner vous indique qu''il y a un(e) '), write(X), write(' sur cette planète.'), nl.
 
 scanner(_)
 write('Il n''y a rien à scanner ici..').
@@ -338,19 +333,6 @@ attaquer :-
 
 attaquer :-
         write('Il n''y a rien à attaquer ici.'), nl.
-
-%Boire potion pour regagner vie
-
-boire(potion) :-
-        possede(potion),
-        retract(possede(potion)),
-        assert(vie(5)),
-        write('Vous buvez la potion et regagnez votre vie'), nl.
-
-boire(potion) :-
-        possede(potion),
-        vie(5),
-        write('Vous êtes déja en pleine forme !'), nl.
 
 /* Règle qui définit la mort */
 
