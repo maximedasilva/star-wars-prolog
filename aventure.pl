@@ -14,17 +14,19 @@
 vie(5).
 argent(3000).
 je_suis_a(alderaan).
+vivant(rebelles).
+vivant(chasseur_Tie).
 
 /* Définition de l'environnement */
 chemin(chasseur_Tie, b, corellia).
 chemin(corellia, u, chasseur_Tie).
 
 chemin(geonosis, e, corellia):- possede(munitions).
-chemin(corellia, o, geonosis):-
+chemin(geonosis, e, corellia):-
         write('Pénétrer dans le secteur contrôllé par l\'empire sans munitions est une mission suicide, refusé!'), nl,
         !, fail.
 
-
+chemin(corellia,o,geonosis).
 chemin(geonosis, s, alderaan).
 chemin(alderaan, n, geonosis).
 
@@ -79,14 +81,21 @@ equipement(invisibilite).
 il_y_a(plan_etoile_noire, geonosis).
 il_y_a(munitions, kamino).
 il_y_a(munitions,hoth).
+il_y_a(boost,hoth).
+
+il_y_a(invisibilite,naboo):-
+  vivant(rebelles),
+write('Les rebelles vous empechent de vous balader!'),!.
+
+il_y_a(canon_laser,hoth).
 il_y_a(propulseur,hoth).
 il_y_a(canon_blaster,hoth).
 il_y_a(invisibilite,naboo).
 
 
+
 /* Définition des NPC vivants */
 
-vivant(chasseur_Tie).
 
 % Règles pour ramasser un objet
 
@@ -106,7 +115,7 @@ ramasser(X) :-
 ramasser(_) :-
         write('Ce secteur semble vide'),
         nl.
-        
+
 % Liste les objets de l'Inventaire
 inventaire :-
     write('Argent:'), nl,
@@ -143,9 +152,6 @@ installer(X) :-
 installer(X) :-
         possede(X),
         nom(X), write(' ne peut pas être installé sur votre vaisseau.'), nl,!.
-
-installer(X) :-
-        write('Vous ne possédez pas '), nom(X), nl,!.
 
 installer(_) :-
         write('Vous ne possédez pas cet équipement...'), nl,!.
@@ -270,7 +276,7 @@ attaquer :-
 
 attaquer :-
         je_suis_a(chasseur_Tie),
-        il_y_a(epee, en_main),
+      c
         retract(vivant(chasseur_Tie)),
         write('Vous frappez sauvagement l''araignée avec votre épée.'), nl,
         write('A chaque coup, un liquide gluant sorti de ses entrailles vous giautorisation_de_lEmpire à la figure.'), nl,
@@ -393,7 +399,12 @@ decrire(chasseur_Tie) :-
         write('Un groupe de chasseurs Tie de l''Empire vous repère et commence à vous attaquer !'), nl,
         write('Vous n''avez aucun moyen de vous défendre... Leurs canons sont surpuissants, votre vaisseau vole en éclats'), nl,
         mourir.
-decrire(naboo).
+decrire(naboo):-
+  vivant(rebelles),
+  write('Ce secteur est contrôlé par les rebels faites demi-tour ou battez vous!'),!.
+
+decrire(naboo):-
+  write('Naboo est une belle planète luxuriante remplie de grands et beaux bâtiments.').
 decrire(tatooine).
 decrire(yavin_IV).
 decrire(etoileNoire).
