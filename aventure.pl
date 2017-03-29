@@ -308,7 +308,8 @@ scanner :-
         write('Votre scanner vous indique qu''il y a un(e) '), write(X), write(' sur cette planète.'), nl,
         fail.
 
-scanner(_).
+scanner(_)
+write('Il n''y a rien à scanner ici..').
 
 
 /* Règles pour tuer les NPC */
@@ -452,7 +453,12 @@ decrire(chasseur_Tie) :-
         write('Un groupe de chasseurs Tie de l''Empire vous repère et commence à vous attaquer !'), nl,
         write('Vous n''avez aucun moyen de vous défendre... Leurs canons sont surpuissants, votre vaisseau vole en éclats'), nl,
         mourir.
-decrire(naboo).
+decrire(naboo):-
+  vivant(rebelles),
+  write("Ce secteur est contrôllé par les rebelles faites demi-tour ou battez vous!"),!.
+
+decrire(naboo):-
+  write("Naboo est une belle planète luxuriante remplie de grand et beaux bâtiments.")
 decrire(tatooine).
 decrire(yavin_IV).
 decrire(etoileNoire).
