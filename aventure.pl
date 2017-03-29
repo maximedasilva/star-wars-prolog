@@ -4,8 +4,8 @@
 
 % Prédicats dynamiques
 
-:- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, argent/1, a_vendre1/2,a_vendre2/2, est_installe/1.
-:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(vivant(_)), retractall(a_vendre1(_,_)), retractall(a_vendre2(_,_)).
+:- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, argent/1, a_vendre/2, est_installe/1.
+:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(vivant(_)).
 
 
 % Point de départ du joueur
@@ -57,21 +57,19 @@ chemin(naboo,b,tatooine).
 nom(munitions) :- write('Munitions pour le canon du X-Wing'),nl.
 nom(autorisation_de_lEmpire) :- write('Autorisation de l''Empire pour pénétrer dans l''Etoile Noire'),nl.
 nom(boost) :- write('Un boost vous permettant d''atteindre la vitesse de la lumière'),nl.
-/* Définition des boutiques */
 
-boutique1(hoth).
-boutique2(tatooine).
+/* Définition de la boutique*/
+
+boutique(hoth).
 
 /* Objets disponibles dans les boutiques */
 
-a_vendre2(canon_laser, 1000).
-a_vendre2(bouclier, 3000).
-a_vendre1(boost, 2000).
-a_vendre1(munitions,100).
+a_vendre(boost, 2000).
+a_vendre(munitions,100).
+a_vendre(canon_laser,600).
 
 /* Définition des équipements disponibles pour le vaisseau */
 equipement(canon_laser).
-equipement(bouclier).
 equipement(boost).
 equipement(munitions).
 equipement(invisibilite).
@@ -85,8 +83,7 @@ il_y_a(epee, mustafar).
 il_y_a(potion, kamino).
 il_y_a(munitions,hoth).
 il_y_a(boost,hoth).
-il_y_a(canon_laser,tatooine).
-il_y_a(bouclier,tatooine).
+il_y_a(canon_laser,hoth).
 il_y_a(invisibilite,naboo).
 
 
@@ -159,15 +156,15 @@ installer(_) :-
 /* Règles pour acheter un objet dans la boutique*/
 acheter(X) :-
         je_suis_a(Endroit),
-        boutique1(Endroit),
+        boutique(Endroit),
         il_y_a(X, Endroit),
-        a_vendre1(X, Prix),
+        a_vendre(X, Prix),
         argent(C),
         C >= Prix,
         retract(argent(C)),
         NewC is C-Prix,
         assert(argent(NewC)),
-        retract(a_vendre1(X,Prix)),
+        retract(a_vendre(X,Prix)),
         retract(il_y_a(X, Endroit)),
         assert(possede(X)),
         write('Vous avez acheté '), nom(X), nl,
@@ -175,42 +172,17 @@ acheter(X) :-
 
 acheter(X) :-
         je_suis_a(Endroit),
-        boutique1(Endroit),
+        boutique(Endroit),
         il_y_a(X, Endroit),
-        a_vendre1(X, Prix),
+        a_vendre(X, Prix),
         argent(C),
         C < Prix,
         write('Cet équipement est trop cher !'), nl,
-        consulter,!.
-acheter(X) :-
-        je_suis_a(Endroit),
-        boutique2(Endroit),
-        il_y_a(X, Endroit),
-        a_vendre2(X, Prix),
-        argent(C),
-        C >= Prix,
-        retract(argent(C)),
-        NewC is C-Prix,
-        assert(argent(NewC)),
-        retract(a_vendre2(X,Prix)),
-        retract(il_y_a(X, Endroit)),
-        assert(possede(X)),
-        write('Vous avez acheté '), nom(X), nl,
         consulter,!.
 
 acheter(X) :-
         je_suis_a(Endroit),
-        boutique2(Endroit),
-        il_y_a(X, Endroit),
-        a_vendre2(X, Prix),
-        argent(C),
-        C < Prix,
-        write('Cet équipement est trop cher !'), nl,
-        consulter,!.
-acheter(X) :-
-        je_suis_a(Endroit),
-        boutique1(Endroit),
-        boutique2(Endroit),
+        boutique(Endroit),
         X,
         write('Cet objet n''est pas à vendre'), nl,
         consulter,!.
@@ -221,26 +193,26 @@ acheter(_) :-
 /* Règles pour consulter les objets de la boutique sans en acheter */
 consulter :-
     je_suis_a(Endroit),
-    boutique1(Endroit),
+    boutique(Endroit),
     argent(C),
     write('Available argent: '), write(C), nl, nl,
     write('The following items are available for purchase:'), nl, nl,
     il_y_a(X, Endroit),
-    a_vendre1(X, Prix),
+    a_vendre(X, Prix),
     nom(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
     fail, !.
 
 consulter :-
     je_suis_a(Endroit),
-    boutique1(Endroit),
+    boutique(Endroit),
     il_y_a(X, Endroit),
-    a_vendre1(X, Prix),
+    a_vendre(X, Prix),
     Prix > 0,
     !.
 
 consulter :-
     je_suis_a(Endroit),
-    boutique1(Endroit),
+    boutique(Endroit),
     write('Il n''y a rien à vendre ici !'), nl.
 
 consulter :-
