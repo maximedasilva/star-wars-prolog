@@ -37,7 +37,7 @@ chemin(kamino, o, hoth).
 chemin(hoth, e, kamino).
 
 chemin(mustafar, o, kamino).
-chemin(kamino, e, mustafar) :- possede(autorisation_de_lEmpire).
+chemin(kamino, e, mustafar) :- possede(plan_etoile_noire).
 chemin(kamino, e, mustafar) :-
         write('Impossible de pénétrer sur ce secteur sans autorisations, refusé'), nl,
         fail.
@@ -57,8 +57,9 @@ chemin(naboo,b,tatooine).
 
 /* Définition des noms des objets */
 nom(munitions) :- write('Munitions pour le canon du X-Wing'),nl.
-nom(autorisation_de_lEmpire) :- write('Autorisation de l''Empire pour pénétrer dans l''Etoile Noire'),nl.
-nom(boost) :- write('Un boost vous permettant d''atteindre la vitesse de la lumière'),nl.
+nom(plan_etoile_noire) :- write('Plans de l''Etoile Noire'),nl.
+nom(propulseur) :- write('Un propulseur vous permettant d''atteindre la vitesse de la lumière'),nl.
+nom(canon_blaster) :- write('Ce canon redoutable est l''arme adéquate pour abattre n''importe quel chasseur'),nl.
 
 /* Définition de la boutique*/
 
@@ -66,23 +67,19 @@ boutique(hoth).
 
 /* Objets disponibles dans les boutiques */
 
-a_vendre(boost, 2000).
+a_vendre(propulseur, 2000).
 a_vendre(munitions,100).
-a_vendre(canon_laser,600).
+a_vendre(canon_blaster,1000).
 
 /* Définition des équipements disponibles pour le vaisseau */
-equipement(canon_laser).
-equipement(boost).
+equipement(canon_blaster).
+equipement(propulseur).
 equipement(munitions).
 equipement(invisibilite).
 
 /* Définition des objets du jeu */
-il_y_a(rubis, chasseur_Tie).
-il_y_a(fraise,alderaan).
-il_y_a(autorisation_de_lEmpire, geonosis).
+il_y_a(plan_etoile_noire, geonosis).
 il_y_a(munitions, kamino).
-il_y_a(epee, mustafar).
-il_y_a(potion, kamino).
 il_y_a(munitions,hoth).
 il_y_a(boost,hoth).
 
@@ -91,6 +88,8 @@ il_y_a(invisibilite,naboo):-
 write('Les rebelles vous empechent de vous balader!'),!.
 
 il_y_a(canon_laser,hoth).
+il_y_a(propulseur,hoth).
+il_y_a(canon_blaster,hoth).
 il_y_a(invisibilite,naboo).
 
 
@@ -199,11 +198,11 @@ consulter :-
     je_suis_a(Endroit),
     boutique(Endroit),
     argent(C),
-    write('Available argent: '), write(C), nl, nl,
-    write('The following items are available for purchase:'), nl, nl,
+    write('Argent : '), write(C), nl, nl,
+    write('Les items suivants sont disponibles :'), nl, nl,
     il_y_a(X, Endroit),
     a_vendre(X, Prix),
-    nom(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
+    nom(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), nl,
     fail, !.
 
 consulter :-
@@ -323,8 +322,11 @@ mode_emploi :-
         write('Sa nouvelle arme de destruction serait appelée Etoile Noire. '),nl,
         write('Vous êtes l''un des meilleurs pilotes de X-Wing de la Galaxie'),nl,
         write('Votre but sera de vous introduire dans l''Etoile Noire afin de la détruire.'),nl,
-        write('Pour cela, il vous faudra réunir des équipements indispensables pour votre vaisseau '),nl,
-        write('ainsi que les plans de l''Etoile Noire.'),nl,
+        write('Pour cela, il vous faudra réunir des équipements indispensables pour votre vaisseau : '),nl,
+        write('un propulseur vous permettra de ne pas vous faire attraper aux abords de l''étoile Noire,'),nl,
+        write('un canon vous sera indispensable pour ne pas périr contre les ennemis,'),nl,
+        write('enfin, l''invisibilité vous permettra de contourner les détecteurs de la planète.'),nl,
+        write('Vous devrez aussi récupérer les plans de l''Etoile Noire.'),nl,
         write('Votre mission sera dangereuse, prenez garde...'),nl,
         nl.
 
