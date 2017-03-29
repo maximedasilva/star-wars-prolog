@@ -4,8 +4,8 @@
 
 % Prédicats dynamiques
 
-:- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, argent/1, a_vendre/1, est_installe/1.
-:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(vivant(_)).
+:- dynamic je_suis_a/1, il_y_a/2, vivant/1, possede/1, argent/1, a_vendre1/2,a_vendre2/2, est_installe/1.
+:- retractall(il_y_a(_, _)), retractall(je_suis_a(_)), retractall(vivant(_)), retractall(a_vendre1(_,_)), retractall(a_vendre2(_,_)).
 
 
 % Point de départ du joueur
@@ -86,6 +86,7 @@ il_y_a(potion, kamino).
 il_y_a(munitions,hoth).
 il_y_a(boost,hoth).
 il_y_a(canon_laser,tatooine).
+il_y_a(bouclier,tatooine).
 il_y_a(invisibilite,naboo).
 
 
@@ -131,7 +132,7 @@ installer(X) :-
         possede(X),
         equipement(X),
         est_installe(X),
-        nom(X), write(' is already est_installe.'), nl,!.
+        nom(X), write(' est déjà installé.'), nl,!.
 
 installer(X) :-
         possede(X),
@@ -143,17 +144,17 @@ installer(X) :-
         possede(X),
         equipement(X),
         assert(est_installe(X)),
-        nom(X), write(' has been est_installe successfully.'), nl,!.
+        nom(X), write(' a été installé avec succès.'), nl,!.
 
 installer(X) :-
         possede(X),
-        nom(X), write(' cannot be est_installe on your ship.'), nl,!.
+        nom(X), write(' ne peut pas être installé sur votre vaisseau.'), nl,!.
 
 installer(X) :-
-        write('You don''t have '), nom(X), nl,!.
+        write('Vous ne possédez pas '), nom(X), nl,!.
 
 installer(_) :-
-        write('You don''t have that object'), nl,!.
+        write('Vous ne possédez pas cet équipement...'), nl,!.
 
 /* Règles pour acheter un objet dans la boutique*/
 acheter(X) :-
@@ -166,10 +167,10 @@ acheter(X) :-
         retract(argent(C)),
         NewC is C-Prix,
         assert(argent(NewC)),
-        retract(a_vendre(X, Prix)),
+        retract(a_vendre1(X,Prix)),
         retract(il_y_a(X, Endroit)),
         assert(possede(X)),
-        write('Vous avez acheté '), X, nl,
+        write('Vous avez acheté '), nom(X), nl,
         consulter,!.
 
 acheter(X) :-
@@ -191,10 +192,10 @@ acheter(X) :-
         retract(argent(C)),
         NewC is C-Prix,
         assert(argent(NewC)),
-        retract(a_vendre(X, Prix)),
+        retract(a_vendre2(X,Prix)),
         retract(il_y_a(X, Endroit)),
         assert(possede(X)),
-        write('Vous avez acheté '), X, nl,
+        write('Vous avez acheté '), nom(X), nl,
         consulter,!.
 
 acheter(X) :-
@@ -239,27 +240,7 @@ consulter :-
 
 consulter :-
     je_suis_a(Endroit),
-    boutique2(Endroit),
-    argent(C),
-    write('Available argent: '), write(C), nl, nl,
-    write('The following items are available for purchase:'), nl, nl,
-    il_y_a(X, Endroit),
-    a_vendre2(X, Prix),
-    nom(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
-    fail, !.
-
-consulter :-
-    je_suis_a(Endroit),
-    boutique2(Endroit),
-    il_y_a(X, Endroit),
-    a_vendre2(X, Prix),
-    Prix > 0,
-    !.
-
-consulter :-
-    je_suis_a(Endroit),
-    boutique1(Endroit);
-    boutique2(Endroit),
+    boutique1(Endroit),
     write('Il n''y a rien à vendre ici !'), nl.
 
 consulter :-
