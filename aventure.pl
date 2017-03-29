@@ -56,6 +56,7 @@ chemin(naboo,b,tatooine).
 /* Définition des noms des objets */
 nom(munitions) :- write('Munitions pour le canon du X-Wing'),nl.
 nom(autorisation_de_lEmpire) :- write('Autorisation de l''Empire pour pénétrer dans l''Etoile Noire'),nl.
+nom(boost) :- write('Un boost vous permettant d''atteindre la vitesse de la lumière'),nl.
 /* Définition des boutiques */
 
 boutique1(hoth).
@@ -82,6 +83,10 @@ il_y_a(autorisation_de_lEmpire, geonosis).
 il_y_a(munitions, kamino).
 il_y_a(epee, mustafar).
 il_y_a(potion, kamino).
+il_y_a(munitions,hoth).
+il_y_a(boost,hoth).
+il_y_a(canon_laser,tatooine).
+il_y_a(invisibilite,naboo).
 
 
 /* Définition des NPC vivants */
@@ -126,7 +131,7 @@ installer(X) :-
         possede(X),
         equipement(X),
         est_installe(X),
-        name(X), write(' is already est_installe.'), nl,!.
+        nom(X), write(' is already est_installe.'), nl,!.
 
 installer(X) :-
         possede(X),
@@ -138,14 +143,14 @@ installer(X) :-
         possede(X),
         equipement(X),
         assert(est_installe(X)),
-        name(X), write(' has been est_installe successfully.'), nl,!.
+        nom(X), write(' has been est_installe successfully.'), nl,!.
 
 installer(X) :-
         possede(X),
-        name(X), write(' cannot be est_installe on your ship.'), nl,!.
+        nom(X), write(' cannot be est_installe on your ship.'), nl,!.
 
 installer(X) :-
-        write('You don''t have '), name(X), nl,!.
+        write('You don''t have '), nom(X), nl,!.
 
 installer(_) :-
         write('You don''t have that object'), nl,!.
@@ -221,7 +226,7 @@ consulter :-
     write('The following items are available for purchase:'), nl, nl,
     il_y_a(X, Endroit),
     a_vendre1(X, Prix),
-    name(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
+    nom(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
     fail, !.
 
 consulter :-
@@ -240,7 +245,7 @@ consulter :-
     write('The following items are available for purchase:'), nl, nl,
     il_y_a(X, Endroit),
     a_vendre2(X, Prix),
-    name(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
+    nom(X), write(' <'), write(X), write('>'), write(' - '), write(Prix), write(' argent'), nl,
     fail, !.
 
 consulter :-
