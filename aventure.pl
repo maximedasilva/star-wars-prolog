@@ -251,10 +251,11 @@ regarder :-
 scanner :-
         je_suis_a(Endroit),
         il_y_a(X, Endroit),
-        write('Votre scanner vous indique qu''il y a un(e) '), write(X), write(' sur cette planète.'), nl.
+        write('Votre scanner vous indique qu''il y a un(e) '), write(X), write(' sur cette planète.'),
+        !, nl.
 
-scanner(_).
-
+scanner :- 
+        write('Le radar reste muet.'),nl.
 
 /* Règles pour tuer les NPC */
 
