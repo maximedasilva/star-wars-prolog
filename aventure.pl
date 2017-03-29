@@ -83,14 +83,10 @@ il_y_a(munitions, kamino).
 il_y_a(munitions,hoth).
 il_y_a(boost,hoth).
 
-il_y_a(invisibilite,naboo):-
-  vivant(rebelles),
-write('Les rebelles vous empechent de vous balader!'),!.
-
 il_y_a(canon_laser,hoth).
 il_y_a(propulseur,hoth).
 il_y_a(canon_blaster,hoth).
-il_y_a(invisibilite,naboo).
+
 
 
 
@@ -259,11 +255,22 @@ scanner :-
         il_y_a(X, Endroit),
         write('Votre scanner vous indique qu''il y a un(e) '), write(X), write(' sur cette planète.'), nl.
 
-scanner(_)
+scanner:-
 write('Il n''y a rien à scanner ici..').
 
 
 /* Règles pour tuer les NPC */
+attaquer:-
+        je_suis_a(naboo),
+
+        possede(munitions),
+          retract(vivant(rebelles)),
+        write('Vous avez vécu la (faible) résistance rebelle vous pouvez désormais récupérer l''invisibilité '),
+        assert(il_y_a(invisibilite,naboo)).
+attaquer:-
+        je_suis_a(naboo),
+        write('vous avez été capturé par les rebelles de naboo '),
+        mourrir.
 
 attaquer :-
         je_suis_a(hoth),
@@ -276,7 +283,6 @@ attaquer :-
 
 attaquer :-
         je_suis_a(chasseur_Tie),
-      c
         retract(vivant(chasseur_Tie)),
         write('Vous frappez sauvagement l''araignée avec votre épée.'), nl,
         write('A chaque coup, un liquide gluant sorti de ses entrailles vous giautorisation_de_lEmpire à la figure.'), nl,
