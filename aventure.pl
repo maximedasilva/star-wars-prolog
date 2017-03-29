@@ -17,23 +17,21 @@ je_suis_a(alderaan).
 
 /* Définition de l'environnement */
 chemin(chasseur_Tie, b, corellia).
-
 chemin(corellia, u, chasseur_Tie).
 
-chemin(corellia, o, geonosis).
-
-chemin(geonosis, e, corellia).
-chemin(geonosis, s, alderaan).
-
-chemin(alderaan, n, geonosis) :- possede(munitions).
-chemin(alderaan, n, geonosis) :-
+chemin(geonosis, e, corellia):- possede(munitions).
+chemin(corellia, o, geonosis):-
         write('Pénétrer dans le secteur contrôllé par l\'empire sans munitions est une mission suicide, refusé!'), nl,
         !, fail.
+
+
+chemin(geonosis, s, alderaan).
+chemin(alderaan, n, geonosis).
+
 chemin(alderaan, s, kamino).
-
 chemin(kamino, n, alderaan).
-chemin(kamino, o, hoth).
 
+chemin(kamino, o, hoth).
 chemin(hoth, e, kamino).
 
 chemin(mustafar, o, kamino).
@@ -41,6 +39,20 @@ chemin(kamino, e, mustafar) :- possede(autorisation_de_lEmpire).
 chemin(kamino, e, mustafar) :-
         write('Impossible de pénétrer sur ce secteur sans autorisations, refusé'), nl,
         fail.
+
+chemin(geonosis,o,tatooine).
+chemin(tatooine,e,geonosis).
+
+chemin(mustafar,s,etoileNoire).
+chemin(etoileNoire,n,mustafar).
+
+chemin(chasseur_Tie,n,yavin_IV).
+chemin(yavin_IV,s,chasseur_Tie).
+
+chemin(tatooine,u,naboo).
+chemin(naboo,b,tatooine).
+
+
 /* Définition des noms des objets */
 nom(munitions) :- write('Munitions pour le canon du X-Wing'),nl.
 nom(autorisation_de_lEmpire) :- write('Autorisation de l''Empire pour pénétrer dans l''Etoile Noire'),nl.
@@ -135,7 +147,7 @@ installer(X) :-
 installer(X) :-
         write('You don''t have '), name(X), nl,!.
 
-installer(_) :- 
+installer(_) :-
         write('You don''t have that object'), nl,!.
 
 /* Règles pour acheter un objet dans la boutique*/
@@ -403,7 +415,7 @@ decrire(corellia) :-
         write('Cela dit, la fuite est parfois est la meilleure solution...'), nl, !.
 
 decrire(corellia) :-
-        write('Corellia est pour beaucoup synonyme de technologie et de voyage spatial.'),nl, 
+        write('Corellia est pour beaucoup synonyme de technologie et de voyage spatial.'),nl,
         write('Pour d''autres cette planète est le symbole des fauteurs de trouble et '), nl,
         write('de tout ce que l''univers compte de hors-la-loi.'),nl.
 
@@ -417,3 +429,7 @@ decrire(chasseur_Tie) :-
         write('Un groupe de chasseurs Tie de l''Empire vous repère et commence à vous attaquer !'), nl,
         write('Vous n''avez aucun moyen de vous défendre... Leurs canons sont surpuissants, votre vaisseau vole en éclats'), nl,
         mourir.
+decrire(naboo).
+decrire(tatooine).
+decrire(yavin_IV).
+decrire(etoileNoire).
