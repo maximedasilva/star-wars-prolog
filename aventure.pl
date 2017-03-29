@@ -14,17 +14,19 @@
 vie(5).
 argent(3000).
 je_suis_a(alderaan).
+vivant(rebelles).
+vivant(chasseur_Tie).
 
 /* Définition de l'environnement */
 chemin(chasseur_Tie, b, corellia).
 chemin(corellia, u, chasseur_Tie).
 
 chemin(geonosis, e, corellia):- possede(munitions).
-chemin(corellia, o, geonosis):-
+chemin(geonosis, e, corellia):-
         write('Pénétrer dans le secteur contrôllé par l\'empire sans munitions est une mission suicide, refusé!'), nl,
         !, fail.
 
-
+chemin(corellia,o,geonosis).
 chemin(geonosis, s, alderaan).
 chemin(alderaan, n, geonosis).
 
@@ -86,12 +88,17 @@ il_y_a(potion, kamino).
 il_y_a(munitions,hoth).
 il_y_a(boost,hoth).
 il_y_a(canon_laser,tatooine).
+
+il_y_a(invisibilite,naboo):-
+  vivant(rebelles),
+write('Les rebelles vous empechent de vous balader!'),fail,!.
+
 il_y_a(invisibilite,naboo).
+
 
 
 /* Définition des NPC vivants */
 
-vivant(chasseur_Tie).
 
 % Règles pour ramasser un objet
 
@@ -111,7 +118,7 @@ ramasser(X) :-
 ramasser(_) :-
         write('Ce secteur semble vide'),
         nl.
-        
+
 % Liste les objets de l'Inventaire
 inventaire :-
     write('Argent:'), nl,
@@ -440,7 +447,7 @@ decrire(naboo):-
   write("Ce secteur est contrôllé par les rebelles faites demi-tour ou battez vous!"),!.
 
 decrire(naboo):-
-  write("Naboo est une belle planète luxuriante remplie de grand et beaux bâtiments.")
+  write("Naboo est une belle planète luxuriante remplie de grand et beaux bâtiments.").
 decrire(tatooine).
 decrire(yavin_IV).
 decrire(etoileNoire).
