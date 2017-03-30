@@ -255,9 +255,10 @@ scanner :-
         il_y_a(X, Endroit),
         write('Votre scanner vous indique qu''il y a un(e) '), write(X), write(' sur cette planète.'), nl.
 
-scanner:-
-write('Il n''y a rien à scanner ici..').
 
+
+scanner :-
+        write('Le radar reste muet.'),nl.
 
 /* Règles pour tuer les NPC */
 attaquer:-
@@ -319,11 +320,16 @@ mode_emploi :-
         write('demarrer.          -- pour commencer une partie.'), nl,
         write('n. s. e. o. u. b.  -- pour aller dans une direction.'), nl,
         write('ramasser(Objet).   -- pour ramasser un objet.'), nl,
-        write('deposer(Objet).    -- pour laisser tomber un objet.'), nl,
+        write('scanner.           -- pour scanner les objets de la planète.'),nl,
+        write('inventaire.        -- pour lister les objets que vous possédez.'),nl,
+        write('consulter.         -- pour consulter les objets de la boutique.'),nl,
+        write('acheter(Objet).    -- pour acheter un objet de la boutique.'),nl,
+        write('installer(Objet).  -- pour installer un équipement sur votre vaisseau.'),nl,
         write('regarder.          -- pour regarder de nouveau autour de vous.'), nl,
         write('attaquer.          -- pour attaquer un ennemi.'), nl,
         write('mode_emploi.       -- pour afficher le mode d''emploi de nouveau.'), nl,
         write('terminer.          -- pour terminer la partie.'), nl,nl,
+
         write('L''Empire prépare une nouvelle attaque contre les populations libres de la Galaxie.'),nl,
         write('Sa nouvelle arme de destruction serait appelée Etoile Noire. '),nl,
         write('Vous êtes l''un des meilleurs pilotes de X-Wing de la Galaxie'),nl,
@@ -402,10 +408,10 @@ decrire(chasseur_Tie) :-
         mourir.
 decrire(naboo):-
   vivant(rebelles),
-  write("Ce secteur est contrôllé par les rebelles faites demi-tour ou battez vous!"),!.
+  write('Ce secteur est contrôlé par les rebels faites demi-tour ou battez vous!'),!.
 
 decrire(naboo):-
-  write("Naboo est une belle planète luxuriante remplie de grand et beaux bâtiments.").
+  write('Naboo est une belle planète luxuriante remplie de grands et beaux bâtiments.').
 decrire(tatooine).
 decrire(yavin_IV).
 decrire(etoileNoire).
